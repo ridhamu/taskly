@@ -123,20 +123,16 @@ func main() {
 		}
 		id, _ := strconv.Atoi(args[2])
 
-		if tasks[id].Status == internal.InProgress {
-			fmt.Println("status already in progress!")
-			return
-		} else {
-			for i := range tasks {
-				if tasks[i].Id == id {
-					tasks[i].Status = internal.InProgress
-					tasks[i].UpdatedAt = time.Now()
-					internal.SaveTasks(filename, tasks)
-					printTask(&tasks[i])
-					return
-				}
+		for i := range tasks {
+			if tasks[i].Id == id {
+				tasks[i].Status = internal.InProgress
+				tasks[i].UpdatedAt = time.Now()
+				internal.SaveTasks(filename, tasks)
+				printTask(&tasks[i])
+				return
 			}
 		}
+
 		fmt.Printf("Task with id %d not found!\n", id)
 	default:
 		fmt.Println("Unknown command", command)
