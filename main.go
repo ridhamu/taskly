@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ridhamu/taskly/internal"
@@ -63,17 +64,17 @@ func main() {
 			fmt.Printf("Task with id %d not found!\n", id)
 		}
 	case "list":
-		// tasks, err := internal.LoadTasks(filename)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// }
-		// fmt.Println(tasks)
-		if len(tasks) > 0 {
+		if len(args) == 2 {
 			for _, v := range tasks {
 				printTask(&v)
 			}
-		} else {
-			fmt.Println("list are empty")
+		} else if len(args) == 3 {
+			status := internal.Status(strings.ToLower(args[2]))
+			for _, v := range tasks {
+				if v.Status == status {
+					printTask(&v)
+				}
+			}
 		}
 	case "delete":
 		if len(args) < 3 {
@@ -104,18 +105,13 @@ func main() {
 		}
 		id, _ := strconv.Atoi(args[2])
 
-		if tasks[id].Status == internal.Done {
-			fmt.Println("status already done!")
-			return
-		} else {
-			for i := range tasks {
-				if tasks[i].Id == id {
-					tasks[i].Status = internal.Done
-					tasks[i].UpdatedAt = time.Now()
-					internal.SaveTasks(filename, tasks)
-					printTask(&tasks[i])
-					return
-				}
+		for i := range tasks {
+			if tasks[i].Id == id {
+				tasks[i].Status = internal.Done
+				tasks[i].UpdatedAt = time.Now()
+				internal.SaveTasks(filename, tasks)
+				printTask(&tasks[i])
+				return
 			}
 		}
 		fmt.Printf("Task with id %d not found!\n", id)
